@@ -53,12 +53,19 @@ $(document).ready(function(){
     $('.modal-update').modal('toggle');
   });
 
+  var map = false;
+
   $(document).on('click', 'button.map', function(){
-    var coordinates = [parseInt($(this).parent().parent().find('td.latitude').text()), parseInt($(this).parent().parent().find('td.longitude').text())];
-    var map = L.map('map').setView([coordinates[0] , coordinates[1]], 13);
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-    L.marker([coordinates[0] , coordinates[1]]).addTo(map);
+    var longitude = parseInt($(this).parent().parent().find('td.longitude').text());
+    var latitude = parseInt($(this).parent().parent().find('td.latitude').text());
+    var map = window.map;
+    map = L.map('map').setView([latitude , longitude], 10);
+    L.marker([latitude , longitude]).addTo(map);
+  });
+
+  $(document).on('click', 'button.close-map', function(){
+    window.map.remove();
+    window.map = false;
+    $('#map').html();
   });
 });
