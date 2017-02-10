@@ -12,7 +12,6 @@ var vue = new Vue({
   },
   methods: {
     fetchClients: function () {
-      console.log('fetchClients');
       this.$http.get('/client').then(function (response) {
         this.clients = response.body;
       });
@@ -23,7 +22,6 @@ var vue = new Vue({
       });
     },
     updateClient: function () {
-      console.log('called');
       this.$http.put('/client', this.client).then(function (response) { 
         this.fetchClients();
       });
@@ -53,5 +51,14 @@ $(document).ready(function(){
     window.vue.client.longitude = $('.longitude').val();
     window.vue.updateClient();
     $('.modal-update').modal('toggle');
+  });
+
+  $(document).on('click', 'button.map', function(){
+    var coordinates = [parseInt($(this).parent().parent().find('td.latitude').text()), parseInt($(this).parent().parent().find('td.longitude').text())];
+    var map = L.map('map').setView([coordinates[0] , coordinates[1]], 13);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    L.marker([coordinates[0] , coordinates[1]]).addTo(map);
   });
 });

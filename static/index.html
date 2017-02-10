@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Vue ToDo</title>
-  <link rel="stylesheet" href="lib/bootstrap-3.3.7.min.css">
   <script src="lib/jquery-3.1.1.min.js"></script>
   <script src="lib/bootstrap-3.3.7.min.js"></script>
   <script src="lib/vue-2.1.10.min.js"></script>
   <script src="lib/vue-resource-1.1.2.min.js"></script>
+  <script src="lib/leaflet-1.0.3.js"></script>
+  <link rel="stylesheet" href="lib/bootstrap-3.3.7.min.css">
+  <link rel="stylesheet" href="lib/leaflet-1.0.3.css">
 </head>
 <body>
   <nav class="navbar navbar-default">
@@ -18,23 +20,38 @@
    <div class="modal fade modal-update" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
-        <center><h3>Update client</h3></center>
-        <hr>
-        <div class="row">
-          <div class="col-md-4"></div>
-          <div class="col-md-4">
-            <center>
-            <form class="form-horizontal">
-              <input type="hidden" class="_id">
-              <input type="text" class="firstname form-control">
-              <input type="text" class="lastname form-control">
-              <input type="text" class="latitude form-control">
-              <input type="text" class="longitude form-control">
-              <button type="button" class="btn btn-success btn-update"><i class="glyphicon glyphicon-ok"></i></button>
-            </form>
-            </center>
-          </div>
-          <div class="col-md-4"></div>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <center><h3>Update client</h3></center>
+        </div>
+        <div class="modal-body">
+          <center>
+          <form class="form-inline">
+            <input type="hidden" class="_id">
+            <input type="text" class="firstname form-control">
+            <input type="text" class="lastname form-control">
+            <input type="text" class="latitude form-control">
+            <input type="text" class="longitude form-control">
+            <button type="button" class="btn btn-success btn-update"><i class="glyphicon glyphicon-ok"></i></button>
+          </form>
+          </center>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade modal-map" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <center><h3>On the map</h3></center>
+        </div>
+        <div class="modal-body" id="map" style="min-height:300px;">
+
+        </div>
+        <div class="modal-footer">
         </div>
       </div>
     </div>
@@ -61,14 +78,16 @@
                 <th>Last Name</th>
                 <th>Latitude</th>
                 <th>Longitude</th>
+                <th>View on map</th>
                 <th>Update</th>
               </tr>
               <tr v-for="(client, index) in clients">
                 <td class="index-to-update">{{ index }}</td>
                 <td>{{ client.firstname }}</td>
                 <td>{{ client.lastname }}</td>
-                <td>{{ client.latitude }}</td>
-                <td>{{ client.longitude }}</td>
+                <td class="latitude">{{ client.latitude }}</td>
+                <td class="longitude">{{ client.longitude }}</td>
+                <td><button type="button" class="btn btn-default map" data-toggle="modal" data-target=".modal-map"><i class="glyphicon glyphicon-map-marker"></i></td>
                 <td><button type="button" class="btn btn-warning update" data-toggle="modal" data-target=".modal-update"><i class="glyphicon glyphicon-pencil"></i></td>
                 <td><button type="button" class="close" aria-label="Close" v-on:click="deleteClient(index)"><span aria-hidden="true">&times;</span></button>
               </tr>
