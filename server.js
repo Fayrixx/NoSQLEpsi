@@ -15,12 +15,12 @@ MongoDB
 ------*/
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-mongoose.connect('mongodb://localhost:27017/todo');
+mongoose.connect('mongodb://localhost:27017/clients');
 // users collection
 var ClientsSchema = new mongoose.Schema({
   _id: {type: mongoose.Schema.Types.ObjectId, auto: true},
   firstname: String,
-  surname: String,
+  lastname: String,
   latitude: String,
   longitude: String
 });
@@ -64,14 +64,15 @@ app.put('/client', function (req, res) {
   if (typeof(req.body.lastname) !== 'undefined'){ update['lastname'] = req.body.lastname; }
   if (typeof(req.body.latitude) !== 'undefined'){ update['latitude'] = req.body.latitude; }
   if (typeof(req.body.longitude) !== 'undefined'){ update['longitude'] = req.body.longitude; }
-  Clients.findOneAndUpdate({('_id':req.body.id)}, update, {}, function(err,client) {
+  Clients.findOneAndUpdate({'_id':req.body._id}, update, {}, function(err,client) {
+    console.log('Update client id '+client._id)
     res.status((!err) ? 200 : 500).json((typeof(client) !== 'undefined') ? client : {error: true});
-  }
+  });
 });
 // Delete
 app.delete('/client/:id', function (req, res) {
   Clients.findOneAndRemove({'_id':req.params.id}, function(err, client){
-    console.log('Removes the todo '+client._id);
+    console.log('Removes the client '+client._id);
     res.status((!err) ? 200 : 500).json((typeof(client) !== 'undefined') ? client : {error: true});
   });
 });
