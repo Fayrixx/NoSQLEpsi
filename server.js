@@ -10,130 +10,73 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 })); 
 app.use(bodyParser.json());
-
 /*------
 MongoDB
 ------*/
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-mongoose.connect('mongodb://localhost:27017/deaddrop');
+mongoose.connect('mongodb://localhost:27017/todo');
 // users collection
-var DeadDropSchema = new mongoose.Schema({
+var ClientsSchema = new mongoose.Schema({
   _id: {type: mongoose.Schema.Types.ObjectId, auto: true},
-  iv: String,
-  v: Number,
-  iter: Number,
-  ks: Number,
-  ts: Number,
-  mode: String,
-  adata: String,
-  cipher: String,
-  salt: String,
-  ct: String
+  firstname: String,
+  surname: String,
+  latitude: String,
+  longitude: String
 });
-var DeadDrop = mongoose.model('DeadDrop', DeadDropSchema);
-
-/*-------------------
-Execution code parts
--------------------*/
-/*
-Log a request
-*/
-function logRequest(req, res, callback){
-  callback(req, res);
-  console.log(req.method+' '+req.headers.host+req.url+' from '+req.connection.remoteAddress);
-}
-
-function createDeadDrop(req, res){
-  var n = new DeadDrop();
-  n.iv = req.body.iv;
-  n.v = req.body.v;
-  n.iter = req.body.iter;
-  n.ks = req.body.ks;
-  n.ts = req.body.ts;
-  n.mode = req.body.mode;
-  n.adata = req.body.adata;
-  n.cipher = req.body.cipher;
-  n.salt = req.body.salt;
-  n.ct = req.body.ct;
-  n.save(function(err,deaddrop) {
-    if (!err && typeof(deaddrop) !== 'undefined'){
-      res.status(200).send(String(deaddrop._id));
-    } else {
-      res.status(500).send('error');
-    }
-  });
-  
-}
-
-function readDeadDrop(req, res){
-  DeadDrop.findOne({'_id':req.body.id}, function(err,deaddrop) {
-    if (err){
-      res.status(500).send('error');
-    } else {
-      if (typeof(deaddrop) === 'undefined'){
-        res.status(200).send('0');
-      } else {
-        res.status(200).json(deaddrop);
-      }
-    }
-  });
-}
-
-function updateDeadDrop(req, res){
-  DeadDrop.findOneAndUpdate({'_id':req.body.id}, {
-    'iv':req.body.iv,
-    'v':req.body.v,
-    'iter':req.body.iter,
-    'ks':req.body.ks,
-    'ts':req.body.ts,
-    'mode':req.body.mode,
-    'adata':req.body.adata,
-    'cipher':req.body.cipher,
-    'salt':req.body.salt,
-    'ct':req.body.ct
-  }, {}, function(err,deaddrop) {
-    if (!err && typeof(deaddrop) !== 'undefined'){
-      res.status(200).send(req.body.id);
-    } else {
-      res.status(500).send('error');
-    }
-  });
-}
-
-function deleteDeadDrop(req, res){
-  DeadDrop.findOneAndRemove({'_id':req.body.id}, function(err, deaddrop){
-    if (!err){
-      res.status(200).send(req.body.id);
-    } else {
-      res.status(500).send('error');
-    }
-  });
-}
-
-app.route('/create')
-  .post(function(req, res) {
-    logRequest(req, res, createDeadDrop);
-  });
-
-app.route('/read')
-  .post(function(req, res) {
-    logRequest(req, res, readDeadDrop);
-  });
-
-app.route('/update')
-  .post(function(req, res) {
-    logRequest(req, res, updateDeadDrop);
-  });
-
-app.route('/delete')
-  .post(function(req, res) {
-    logRequest(req, res, deleteDeadDrop);
-  });
+var Clients = mongoose.model('Clients', ClientsSchema);
 
 /*-----
-Run it
+Routes
 -----*/
-app.listen(3000, function() {
-  console.log('Listening on port 3000!');
+// Get static HTML pages
+app.get('/',function (req, res) {
+  res.render('index');
 });
+
+/*---
+CRUD
+---*/
+// Create
+app.post('/client', function (req, res) {
+  var n = new Clients();
+  n.firstname = req.body.firstname;
+  n.lastname = req.body.lastname;
+  n.latitude = req.body.latitude;
+  n.longitude = req.body.longitude;
+  n.save();
+  n.save(function(err,client) {
+    console.log('Adds the client '+client._id);
+    res.status((!err) ? 200 : 500).json((typeof(client) !== 'undefined') ? client : {error: true});
+  });
+});
+// Read
+app.get('/client', function (req, res) {
+  Clients.find({}, function(err, clients) {
+    console.log('Returns '+clients.length+' todos');
+    res.status((!err) ? 200 : 500).json((typeof(clients) !== 'undefined') ? clients : {error: true});
+  });
+});
+// Update
+app.put('/client', function (req, res) {
+  var update = {};
+  if (typeof(req.body.firstname) !== 'undefined'){ update['firstname'] = req.body.firstname; }
+  if (typeof(req.body.lastname) !== 'undefined'){ update['lastname'] = req.body.lastname; }
+  if (typeof(req.body.latitude) !== 'undefined'){ update['latitude'] = req.body.latitude; }
+  if (typeof(req.body.longitude) !== 'undefined'){ update['longitude'] = req.body.longitude; }
+  Clients.findOneAndUpdate({('_id':req.body.id)}, update, {}, function(err,client) {
+    res.status((!err) ? 200 : 500).json((typeof(client) !== 'undefined') ? client : {error: true});
+  }
+});
+// Delete
+app.delete('/client/:id', function (req, res) {
+  Clients.findOneAndRemove({'_id':req.params.id}, function(err, client){
+    console.log('Removes the todo '+client._id);
+    res.status((!err) ? 200 : 500).json((typeof(client) !== 'undefined') ? client : {error: true});
+  });
+});
+/*----
+Start
+----*/
+app.listen(3000);
+console.log('server.js listens 3000');
