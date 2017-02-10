@@ -2,31 +2,34 @@ new Vue({
   http: {
     root: '/'
   },
-  el: '#todos',
+  el: '#clients',
   data: {
-    todo: { __v: '', content: '', title: '', _id:'' },
-    todos: []
+    client: { __v: '', firstname: '', lastname: '',  latitude: '', longitude: '', _id:'' },
+    clients: []
   },
   created: function () {
-    this.fetchTodos();
+    this.fetchClients();
   },
   methods: {
-    fetchTodos: function () {
-      console.log('fetchTodos');
-      this.$http.get('/todos').then(function (response) {
-        this.todos = response.body;
+    fetchClients: function () {
+      console.log('fetchClients');
+      this.$http.get('/client').then(function (response) {
+        this.clients = response.body;
       });
     },
-    addTodo: function () {
-      if (this.todo.title.trim()) {
-        this.$http.put('/todo', this.todo).then(function (response) {
-          this.todos.push(response.body);
-        });
-      }
+    createClient: function () {
+      this.$http.post('/client', this.client).then(function (response) {
+        this.clients.push(response.body);
+      });
+    },
+    updateClient: function (index) {
+      this.$http.put('/client', this.client).then(function (response) {
+        this.client.splice(index, 1);
+      })
     },
     deleteTodo: function (index) {
-      this.$http.delete('/todo/' + this.todos[index]._id).then(function (response) {
-        this.todos.splice(index, 1);
+      this.$http.delete('/client/' + this.clients[index]._id).then(function (response) {
+        this.clients.splice(index, 1);
       });
     }
   }
