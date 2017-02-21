@@ -65,4 +65,12 @@ $(document).ready(function(){
     $('.modal-update').modal('toggle');
   });
 
+  $(document).on('click', 'button.map', function(){
+    var map = new GMaps({
+      el: '#map',
+      lat: parseInt($(this).parent().parent().find('td.latitude').text()),
+      lng: parseInt($(this).parent().parent().find('td.longitude').text())
+    });
+  });
+
 });

@@ -7,6 +7,9 @@
   <script src="lib/bootstrap-3.3.7.min.js"></script>
   <script src="lib/vue-2.1.10.min.js"></script>
   <script src="lib/vue-resource-1.1.2.min.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJf0zBVr9lRp2QRg9XWOwdvNyZSeOKWro"
+  type="text/javascript"></script>
+  <script src="lib/gmaps.min.js"></script>
   <link rel="stylesheet" href="lib/bootstrap-3.3.7.min.css">
 </head>
 <body>
@@ -18,7 +21,21 @@
       </ul>
     </div>
   </nav>
+  <div class="modal fade modal-map" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <center><h3>On the map</h3></center>
+        </div>
+        <div class="modal-body" id="map" style="min-height:300px;">
 
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
    <div class="modal fade modal-update" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
@@ -65,6 +82,7 @@
                 <th>Last Name</th>
                 <th>Latitude</th>
                 <th>Longitude</th>
+                <th>Map</th>
                 <th>Update</th>
               </tr>
               <tr v-for="(client, index) in clients">
@@ -73,6 +91,7 @@
                 <td>{{ client.lastname }}</td>
                 <td class="latitude">{{ client.latitude }}</td>
                 <td class="longitude">{{ client.longitude }}</td>
+                <td><button type="button" class="btn btn-default map" data-toggle="modal" data-target=".modal-map"><i class="glyphicon glyphicon-map-marker"></i></td>
                 <td><button type="button" class="btn btn-warning update" data-toggle="modal" data-target=".modal-update"><i class="glyphicon glyphicon-pencil"></i></td>
                 <td><button type="button" class="close" aria-label="Close" v-on:click="deleteClient(index)"><span aria-hidden="true">&times;</span></button>
               </tr>
