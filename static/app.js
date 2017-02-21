@@ -16,27 +16,35 @@ var vue = new Vue({
       this.$http.get('/client').then(function (response) {
         this.clients = response.body;
         this.n = this.clients.length;
+        window.DisplayNClients();
       });
     },
     createClient: function () {
       this.$http.post('/client', this.client).then(function (response) {
         this.clients.push(response.body);
         this.n = this.clients.length + 1;
+        window.DisplayNClients();
       });
     },
     updateClient: function () {
       this.$http.put('/client', this.client).then(function (response) { 
         this.fetchClients();
+        window.DisplayNClients();
       });
     },
     deleteClient: function (index) {
       this.$http.delete('/client/' + this.clients[index]._id).then(function (response) {
         this.clients.splice(index, 1);
         this.n = this.clients.length - 1;
+        window.DisplayNClients();
       });
     }
   }
 });
+
+function DisplayNClients(){
+  $('#nClients').text('Clients : '+vue.n);
+}
 
 $(document).ready(function(){
   $(document).on('click', 'button.update', function(){
@@ -57,5 +65,4 @@ $(document).ready(function(){
     $('.modal-update').modal('toggle');
   });
 
-  //$('.table').DataTable();
 });
