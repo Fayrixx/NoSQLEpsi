@@ -5,7 +5,8 @@ var vue = new Vue({
   el: '#clients',
   data: {
     client: { __v: '', firstname: '', lastname: '',  latitude: '', longitude: '', _id:'' },
-    clients: []
+    clients: [],
+    n: clients.length
   },
   created: function () {
     this.fetchClients();
@@ -14,11 +15,13 @@ var vue = new Vue({
     fetchClients: function () {
       this.$http.get('/client').then(function (response) {
         this.clients = response.body;
+        this.n = this.clients.length;
       });
     },
     createClient: function () {
       this.$http.post('/client', this.client).then(function (response) {
         this.clients.push(response.body);
+        this.n = this.clients.length + 1;
       });
     },
     updateClient: function () {
@@ -29,6 +32,7 @@ var vue = new Vue({
     deleteClient: function (index) {
       this.$http.delete('/client/' + this.clients[index]._id).then(function (response) {
         this.clients.splice(index, 1);
+        this.n = this.clients.length - 1;
       });
     }
   }
@@ -53,19 +57,5 @@ $(document).ready(function(){
     $('.modal-update').modal('toggle');
   });
 
-  var map = false;
-
-  $(document).on('click', 'button.map', function(){
-    var longitude = parseInt($(this).parent().parent().find('td.longitude').text());
-    var latitude = parseInt($(this).parent().parent().find('td.latitude').text());
-    var map = window.map;
-    map = L.map('map').setView([latitude , longitude], 10);
-    L.marker([latitude , longitude]).addTo(map);
-  });
-
-  $(document).on('click', 'button.close-map', function(){
-    window.map.remove();
-    window.map = false;
-    $('#map').html();
-  });
+  //$('.table').DataTable();
 });
