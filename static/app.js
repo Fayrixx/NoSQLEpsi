@@ -66,11 +66,25 @@ $(document).ready(function(){
   });
 
   $(document).on('click', 'button.map', function(){
-    var map = new GMaps({
-      el: '#map',
-      lat: parseInt($(this).parent().parent().find('td.latitude').text()),
-      lng: parseInt($(this).parent().parent().find('td.longitude').text())
+    var lat = parseInt($(this).parent().parent().find('td.latitude').text());
+    var lng = parseInt($(this).parent().parent().find('td.longitude').text());
+    var center = new google.maps.LatLng(lat, lng);
+    var mapOptions = {
+      zoom: 5,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      center: center
+    };
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    var marker = new google.maps.Marker({
+      map: map,
+      position: center
+    });
+    $('.modal-map').modal({
+      backdrop: 'static',
+      keyboard: false
+    }).on('shown.bs.modal', function () {
+      google.maps.event.trigger(map, 'resize');
+      map.setCenter(center);
     });
   });
-
 });
